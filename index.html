@@ -125,61 +125,6 @@
             align-items: center;
             gap: 4px;
         }
-
-        /* ESTILOS DA JANELA DO PLAYER (MODAL) */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            width: 90%;
-            max-width: 800px;
-            background-color: #0b1b36;
-            border: 2px solid #dfb15b;
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            color: #fff;
-            font-size: 30px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 1001;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-        }
-
-        .close-btn:hover {
-            color: #dfb15b;
-        }
-
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%; /* Proporção 16:9 */
-            height: 0;
-        }
-
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
     </style>
 </head>
 <body>
@@ -194,17 +139,8 @@
     <main class="movies-grid" id="movies-grid">
         </main>
 
-    <div id="videoModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" id="closeModal">&times;</span>
-            <div class="video-container">
-                <iframe id="videoPlayer" src="" allowfullscreen></iframe>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // API KEY DO TMDB JÁ INSERIDA
+        // API KEY DO TMDB JÁ INSERIDA CONFORME GERADO
         const API_KEY = 'ec17ab8ea3020aec3e0bd756453c23fc'; 
         
         const API_URL = `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=pt-BR`;
@@ -212,9 +148,6 @@
 
         const moviesGrid = document.getElementById('movies-grid');
         const searchInput = document.getElementById('search');
-        const videoModal = document.getElementById('videoModal');
-        const videoPlayer = document.getElementById('videoPlayer');
-        const closeModal = document.getElementById('closeModal');
 
         async function getMovies(url) {
             try {
@@ -240,7 +173,7 @@
                 const movieEl = document.createElement('div');
                 movieEl.classList.add('movie-card');
                 
-                // Evento de clique para abrir o player com o ID do filme
+                // Evento de clique corrigido para abrir o player externo
                 movieEl.addEventListener('click', () => openPlayer(id));
 
                 const posterUri = poster_path 
@@ -258,26 +191,11 @@
             });
         }
 
-        // Função que abre a janela do player de vídeo usando o embed.su
+        // Função que direciona com segurança para o player de vídeo livre de travas de iframe
         function openPlayer(movieId) {
             const embedUrl = `https://embed.su/embed/movie/${movieId}`;
-            videoPlayer.src = embedUrl;
-            videoModal.style.display = 'flex';
+            window.open(embedUrl, '_blank');
         }
-
-        // Fecha o player e limpa a URL para o vídeo parar de rodar no fundo
-        closeModal.addEventListener('click', () => {
-            videoModal.style.display = 'none';
-            videoPlayer.src = '';
-        });
-
-        // Fecha o modal se clicar na área escura de fora
-        window.addEventListener('click', (e) => {
-            if (e.target === videoModal) {
-                videoModal.style.display = 'none';
-                videoPlayer.src = '';
-            }
-        });
 
         searchInput.addEventListener('input', (e) => {
             const searchTerm = e.target.value;
